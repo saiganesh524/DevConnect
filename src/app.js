@@ -1,26 +1,22 @@
 const express = require("express");
-
 const app = express();
 
-const { adminAuth, userAuth } = require("./middlewares/auth");
-
-// Handle Auth Middleware for all GET, POST, ... requests
-app.use("/admin", adminAuth);
-
-app.post("/user/login", (req, res) => {
-  res.send("User logged in successfully");
+app.get("/getUserData", (req, res) => {
+  try {
+    // logic of DB call and get User data
+    throw new Error("xcvbnmuiop");
+    res.send("user data sent!");
+  } catch (err) {
+    console.log("Error:", err.message);
+    res.status(500).send("Error fetching user data");
+  }
 });
 
-app.get("/user/data", userAuth, (req, res) => {
-  res.send("User data sent!");
-});
-
-app.get("/admin/getAllData", (req, res) => {
-  res.send("All data sent!");
-});
-
-app.get("/admin/deleteUser", (req, res) => {
-  res.send("Deleted a user");
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    // Log error
+    res.status(500).send("Something went wrong");
+  }
 });
 
 app.listen(3000, () => {
