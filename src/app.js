@@ -1,24 +1,32 @@
 const express = require("express");
+const { connectDB } = require("./config/database");
 const app = express();
+const User = require("./models/user");
 
-app.get("/getUserData", (req, res) => {
+app.post("/signup", async (req, res) => {
+  // Creating new instance of the User model
+  const user = new User({
+    firstName: "Akshay",
+    lastName: "Saini",
+    email: "Akshay@Saini.com",
+    password: "Akshay@123",
+  });
+
   try {
-    // logic of DB call and get User data
-    throw new Error("xcvbnmuiop");
-    res.send("user data sent!");
+    await user.save();
+    res.send("User registered successfully");
   } catch (err) {
-    console.log("Error:", err.message);
-    res.status(500).send("Error fetching user data");
+    res.status(400).send("Error Saving the User: " + err.message);
   }
 });
 
-app.use("/", (err, req, res, next) => {
-  if (err) {
-    // Log error
-    res.status(500).send("Something went wrong");
-  }
-});
-
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+connectDB()
+  .then(() => {
+    console.log("MongoDB Connected...");
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
+  })
+  .catch((err) => {
+    console.error("Couldn't connect to Mongo");
+  });
