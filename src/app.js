@@ -47,6 +47,36 @@ app.get("/feed", async (req, res) => {
   }
 });
 
+// User API - DELETE /user - delete a specific user by _id
+app.delete("/user", async (req, res) => {
+  try {
+    // const deleteUser = await User.findByIdAndDelete({ _id: req.body.userId });
+    const deleteUser = await User.findByIdAndDelete(req.body.userId);
+    if (!deleteUser) {
+      res.status(404).send("User Not Found");
+    } else {
+      res.send("User Deleted Successfulyy");
+    }
+  } catch {
+    res.status(400).send("Something went Wrong");
+  }
+});
+
+// User API - PATCH /user - Update data of the user
+app.patch("/user", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  try {
+    const updatingUser = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "before",
+    });
+    console.log("Before updatingUser : ", updatingUser);
+    res.send("User Updated Successfully");
+  } catch {
+    res.status(400).send("Something Went wrong");
+  }
+});
+
 connectDB()
   .then(() => {
     console.log("MongoDB Connected...");
