@@ -16,6 +16,37 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// User API - GET /user - get a specific user by email
+app.get("/user", async (req, res) => {
+  // console.log(req.body.email);
+  try {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      res.status(404).send("User not found");
+    } else {
+      res.send(user);
+    }
+  } catch {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+// Feed API - GET /feed - get all the users from the database
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+
+    if (users.length === 0) {
+      res.status(404).send("User Not Found");
+    } else {
+      res.send(users);
+    }
+  } catch {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 connectDB()
   .then(() => {
     console.log("MongoDB Connected...");
