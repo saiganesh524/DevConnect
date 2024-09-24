@@ -67,6 +67,7 @@ app.patch("/user/:userId", async (req, res) => {
   const userId = req.params.userId;
   const data = req.body;
   try {
+    // API Level validation
     const ALLOWED_UPDATES = ["photoUrl", "about", "skills"];
 
     const isUpdateAllowed = Object.keys(data).every((k) =>
