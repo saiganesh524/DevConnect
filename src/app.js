@@ -20,7 +20,7 @@ app.post("/signup", async (req, res) => {
 app.get("/user", async (req, res) => {
   // console.log(req.body.email);
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ emailId: req.body.emailId });
 
     if (!user) {
       res.status(404).send("User not found");
@@ -69,11 +69,12 @@ app.patch("/user", async (req, res) => {
   try {
     const updatingUser = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "before",
+      runValidators: true,
     });
     console.log("Before updatingUser : ", updatingUser);
     res.send("User Updated Successfully");
-  } catch {
-    res.status(400).send("Something Went wrong");
+  } catch (err) {
+    res.status(400).send("UPDATE FAILED: " + err.message);
   }
 });
 
