@@ -69,17 +69,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.methods.getJWT = async function () {
-  const user = this;
-
-  // Create a JWT Token
-  const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$790", {
-    expiresIn: "1h",
-  });
-
-  return token;
-};
-
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
   const passwordHash = user.password;
@@ -90,6 +79,17 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
   );
 
   return isPasswordValid;
+};
+
+userSchema.methods.getJWT = async function () {
+  const user = this;
+
+  // Create a JWT Token
+  const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$790", {
+    expiresIn: "1h",
+  });
+
+  return token;
 };
 
 module.exports = mongoose.model("User", userSchema);
