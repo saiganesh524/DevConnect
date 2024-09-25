@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { request } = require("express");
 
 const userAuth = async (req, res, next) => {
   // Logic of checking if req is authorized
