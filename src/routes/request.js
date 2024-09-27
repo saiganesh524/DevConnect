@@ -3,9 +3,9 @@ const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
-const requestsRouter = express.Router();
+const requestRouter = express.Router();
 
-requestsRouter.post(
+requestRouter.post(
   "/request/send/:status/:toUserId",
   userAuth,
   async (req, res) => {
@@ -34,10 +34,11 @@ requestsRouter.post(
 
       const existingConnectionRequest = await ConnectionRequest.findOne({
         $or: [
-          { fromUserId, toUserId },
-          { fromUserId: toUserId, toUserId: fromUserId },
+          { fromUserId, toUserId, status: "interested" },
+          { fromUserId: toUserId, toUserId: fromUserId, status: "interested" },
         ],
       });
+
       if (existingConnectionRequest) {
         return res
           .status(400)
@@ -56,4 +57,39 @@ requestsRouter.post(
   }
 );
 
-module.exports = requestsRouter;
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { status, requestId } = req.params;
+      // allowed status check
+      const allowedStatus = ["accepted", "rejected"];
+      if (!allowedStatus.includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      // connection request check
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+      if (!connectionRequest) {
+        return res
+          .status(404)
+          .json({ message: "Connection request not found" });
+      }
+      // modify connection
+      connectionRequest.status = status;
+      // save connection
+      const data = await connectionRequest.save();
+
+      res.json({ message: "Connection request " + status, data });
+    } catch (err) {
+      res.status(400).send("ERROR : " + err.message);
+    }
+  }
+);
+
+module.exports = requestRouter;
