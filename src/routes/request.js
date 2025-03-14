@@ -4,6 +4,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
 const requestRouter = express.Router();
+const sendEmail = require("../utils/sendEmail");
 
 requestRouter.post(
   "/request/send/:status/:toUserId",
@@ -45,6 +46,12 @@ requestRouter.post(
           .send({ message: "Connection request already exists It's a match" });
       }
       const data = await connectionRequest.save();
+
+      const emailRes = await sendEmail.run(
+        "A new friend request from" + req.user.firstName,
+        req.user.firstName + " sent you a friend request"
+      );
+      console.log(emailRes);
 
       res.json({
         message:

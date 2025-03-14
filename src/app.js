@@ -31,5 +31,5 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.error("Couldn't connect to Mongo");
+    console.error("Couldn't connect to Mongo" + err.message);
   });
