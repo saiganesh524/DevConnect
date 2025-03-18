@@ -43,13 +43,16 @@ requestRouter.post(
       if (existingConnectionRequest) {
         return res
           .status(400)
-          .send({ message: "Connection request already exists It's a match" });
+          .send({ message: "Connection request already exists it's a match" });
       }
       const data = await connectionRequest.save();
 
       const emailRes = await sendEmail.run(
-        "A new friend request from" + req.user.firstName,
-        req.user.firstName + " sent you a friend request"
+        "A new friend request from " + req.user.firstName,
+        toUser.firstName +
+          ", " +
+          req.user.firstName +
+          " sent you a friend request"
       );
       console.log(emailRes);
 
